@@ -1,0 +1,42 @@
+name: Publish Windows downloads
+
+on:
+  push:
+    branches:
+      - windows-quick-build-20260907
+    paths:
+      - .github/workflows/publish-windows-downloads.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download successful Windows artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          gh run download 34097912037 -n "ERA-Windows-x64" -D package
+          ls -lah package
+          (cd package && zip -9 -r "../ERA-Windows-x64.zip" .)
+
+      - name: Publish permanent GitHub download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          if gh release view "windows-x64-20260907" >/dev/null 2>&1; then
+              gh release upload "windows-x64-20260907" "ERA-Windows-x64.zip" package/* --clobber
+            else
+              gh release create "windows-x64-20260907" "ERA-Windows-x64.zip" package/* \
+                --target main \
+                --title "Europa (ERA) Windows x64 — 7 September 2026" \
+                --notes "Windows x64 binaries for Europa (ERA), built from the maintained Xnuva Blockchain Project source. Includes SHA-256 checksums. These binaries preserve the existing ERA blockchain and wallet compatibility."
+            fi
