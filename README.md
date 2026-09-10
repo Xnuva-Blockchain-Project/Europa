@@ -46,6 +46,19 @@ project overview. Start with:
 The `depends` build system is included for reproducible dependency builds where
 appropriate.
 
+## Network bootstrap
+
+Until fixed-seed discovery is included in maintained clients, a fresh Europa
+node can bootstrap from the project public node:
+
+```ini
+addnode=81.130.208.151:11342
+```
+
+The address above is the Xnuva Blockchain Project T620 node on a static public
+IPv4 address. Only the Europa P2P port is used; RPC should not be exposed to the
+public Internet.
+
 ## Repository maintenance
 
 This repository is maintained as part of the **Xnuva Blockchain Project**
