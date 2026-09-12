@@ -50,6 +50,8 @@ struct BIP9Deployment {
 struct Params {
     uint256 hashGenesisBlock;
     int nSubsidyHalvingInterval;
+    /** One-time ERA lost-chain recovery height; -1 disables. */
+    int nRecoveryActivationHeight{-1};
     /** Block height at which BIP16 becomes active */
     int BIP16Height;
     /** Block height and hash at which BIP34 becomes active */

@@ -5,6 +5,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <validation.h>
+#include <era_recovery_outputs.h>
 
 #include <arith_uint256.h>
 #include <chain.h>
@@ -1154,13 +1155,51 @@ bool ReadRawBlockFromDisk(std::vector<uint8_t>& block, const CBlockIndex* pindex
 
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
-    int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
-    // Force block reward to zero when right shift is undefined.
+    int halvings =
+        nHeight / consensusParams.nSubsidyHalvingInterval;
+
     if (halvings >= 64)
         return 0;
 
     CAmount nSubsidy = 10 * COIN;
     nSubsidy >>= halvings;
+
+    /*
+     * The 49,310 ERA recovery is advance issuance,
+     * not additional lifetime issuance.
+     */
+    const int recoveryHeight =
+        consensusParams.nRecoveryActivationHeight;
+
+    if (recoveryHeight >= 0 &&
+        nHeight >= recoveryHeight &&
+        nHeight < consensusParams.nSubsidyHalvingInterval)
+    {
+        const int64_t repaymentBlocks =
+            consensusParams.nSubsidyHalvingInterval -
+            recoveryHeight;
+
+        const CAmount baseDeduction =
+            era_recovery::TOTAL_VALUE /
+            repaymentBlocks;
+
+        const int64_t remainder =
+            era_recovery::TOTAL_VALUE %
+            repaymentBlocks;
+
+        const int64_t offset =
+            nHeight - recoveryHeight;
+
+        const CAmount deduction =
+            baseDeduction +
+            (offset < remainder ? 1 : 0);
+
+        if (deduction > nSubsidy)
+            return 0;
+
+        nSubsidy -= deduction;
+    }
+
     return nSubsidy;
 }
 
@@ -2026,12 +2065,80 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     int64_t nTime3 = GetTimeMicros(); nTimeConnect += nTime3 - nTime2;
     LogPrint(BCLog::BENCH, "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs (%.2fms/blk)]\n", (unsigned)block.vtx.size(), MILLI * (nTime3 - nTime2), MILLI * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : MILLI * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * MICRO, nTimeConnect * MILLI / nBlocksTotal);
 
-    CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams.GetConsensus());
+    const Consensus::Params& consensus =
+        chainparams.GetConsensus();
+
+    const bool recoveryActivation =
+        consensus.nRecoveryActivationHeight >= 0 &&
+        pindex->nHeight ==
+            consensus.nRecoveryActivationHeight;
+
+    if (recoveryActivation)
+    {
+        if (block.vtx[0]->vout.size() <
+            1 + era_recovery::OUTPUT_COUNT)
+        {
+            return state.DoS(
+                100,
+                error(
+                    "ConnectBlock(): ERA recovery outputs missing"),
+                REJECT_INVALID,
+                "bad-era-recovery-count");
+        }
+
+        for (size_t i = 0;
+             i < era_recovery::OUTPUT_COUNT;
+             ++i)
+        {
+            const CTxOut& out =
+                block.vtx[0]->vout[i + 1];
+
+            const auto scriptBytes =
+                ParseHex(
+                    era_recovery::SCRIPT_PUBKEY_HEX[i]);
+
+            const CScript expectedScript(
+                scriptBytes.begin(),
+                scriptBytes.end());
+
+            if (out.nValue !=
+                    era_recovery::OUTPUT_VALUE ||
+                out.scriptPubKey != expectedScript)
+            {
+                return state.DoS(
+                    100,
+                    error(
+                        "ConnectBlock(): ERA recovery "
+                        "output %u mismatch",
+                        static_cast<unsigned>(i)),
+                    REJECT_INVALID,
+                    "bad-era-recovery-output");
+            }
+        }
+    }
+
+    CAmount blockReward =
+        nFees +
+        GetBlockSubsidy(
+            pindex->nHeight,
+            consensus);
+
+    if (recoveryActivation)
+        blockReward +=
+            era_recovery::TOTAL_VALUE;
+
     if (block.vtx[0]->GetValueOut() > blockReward)
-        return state.DoS(100,
-                         error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",
-                               block.vtx[0]->GetValueOut(), blockReward),
-                               REJECT_INVALID, "bad-cb-amount");
+    {
+        return state.DoS(
+            100,
+            error(
+                "ConnectBlock(): coinbase pays too much "
+                "(actual=%d vs limit=%d)",
+                block.vtx[0]->GetValueOut(),
+                blockReward),
+            REJECT_INVALID,
+            "bad-cb-amount");
+    }
 
     if (!control.Wait())
         return state.DoS(100, error("%s: CheckQueue failed", __func__), REJECT_INVALID, "block-validation-failed");

@@ -4,6 +4,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <miner.h>
+#include <era_recovery_outputs.h>
 
 #include <amount.h>
 #include <arith_uint256.h>
@@ -23,6 +24,7 @@
 #include <script/standard.h>
 #include <timedata.h>
 #include <util/moneystr.h>
+#include <util/strencodings.h>
 #include <util/system.h>
 #include <validationinterface.h>
 
@@ -206,7 +208,19 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
 
     int nPackagesSelected = 0;
     int nDescendantsUpdated = 0;
-    addPackageTxs(nPackagesSelected, nDescendantsUpdated);
+    if (nHeight !=
+        chainparams.GetConsensus().nRecoveryActivationHeight)
+    {
+        addPackageTxs(
+            nPackagesSelected,
+            nDescendantsUpdated);
+    }
+    else
+    {
+        LogPrintf(
+            "ERA RECOVERY: activation template reserved "
+            "for recovery outputs\n");
+    }
 
     int64_t nTime1 = GetTimeMicros();
 
@@ -219,7 +233,41 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     coinbaseTx.vin[0].prevout.SetNull();
     coinbaseTx.vout.resize(1);
     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
-    coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
+    coinbaseTx.vout[0].nValue =
+        nFees +
+        GetBlockSubsidy(
+            nHeight,
+            chainparams.GetConsensus());
+
+    if (nHeight ==
+        chainparams.GetConsensus().
+            nRecoveryActivationHeight)
+    {
+        LogPrintf(
+            "ERA RECOVERY: constructing mandatory recovery outputs\n");
+
+        for (size_t i = 0;
+             i < era_recovery::OUTPUT_COUNT;
+             ++i)
+        {
+            const auto scriptBytes =
+                ParseHex(
+                    era_recovery::SCRIPT_PUBKEY_HEX[i]);
+
+            CTxOut recoveryOut;
+
+            recoveryOut.nValue =
+                era_recovery::OUTPUT_VALUE;
+
+            recoveryOut.scriptPubKey =
+                CScript(
+                    scriptBytes.begin(),
+                    scriptBytes.end());
+
+            coinbaseTx.vout.push_back(
+                std::move(recoveryOut));
+        }
+    }
     coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
     pblocktemplate->vchCoinbaseCommitment = GenerateCoinbaseCommitment(*pblock, pindexPrev, chainparams.GetConsensus());
