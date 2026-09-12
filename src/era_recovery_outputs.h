@@ -10,12 +10,12 @@
 
 namespace era_recovery {
 
-inline constexpr std::size_t OUTPUT_COUNT = 4931;
-inline constexpr std::int64_t OUTPUT_VALUE = 1000000000LL;
-inline constexpr std::int64_t TOTAL_VALUE = 4931000000000LL;
-inline constexpr const char LEDGER_SHA256[] = "c5e72a92e711e09ca6e94128dafcf2d27f0455207cc220080f76d33b3788e10b";
+static constexpr std::size_t OUTPUT_COUNT = 4931;
+static constexpr std::int64_t OUTPUT_VALUE = 1000000000LL;
+static constexpr std::int64_t TOTAL_VALUE = 4931000000000LL;
+static constexpr const char LEDGER_SHA256[] = "c5e72a92e711e09ca6e94128dafcf2d27f0455207cc220080f76d33b3788e10b";
 
-inline constexpr std::array<const char*, OUTPUT_COUNT> SCRIPT_PUBKEY_HEX = {{
+static constexpr std::array<const char*, OUTPUT_COUNT> SCRIPT_PUBKEY_HEX = {{
     "a914b9013acc4bdbe8c86e259818f49f02d150c0f18e87",
     "a914e066b7cbaea8e870b6c29b34346776bea361b21587",
     "a9144b6a243958957ebaea04307767e61a72630dc7cb87",
