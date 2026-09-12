@@ -6,6 +6,7 @@
 #include <miner.h>
 
 #include <amount.h>
+#include <arith_uint256.h>
 #include <chain.h>
 #include <chainparams.h>
 #include <coins.h>
@@ -73,6 +74,70 @@ static BlockAssembler::Options DefaultOptions()
 
 BlockAssembler::BlockAssembler(const CChainParams& params) : BlockAssembler(params, DefaultOptions()) {}
 
+/*
+ * Europa mainnet mining safety gate.
+ *
+ * Mining is permitted only when the active chain contains the independently
+ * qualified recognised ERA anchor at height 12000, has at least the
+ * corresponding accumulated work, is no longer in initial block download,
+ * and has an active peer connection.
+ *
+ * This deliberately fails closed.  A fresh, truncated, stale, reconstructed
+ * alternative or otherwise unqualified mainnet chain may sync and be
+ * inspected, but it cannot create a new mining template.
+ *
+ * Testnet and regtest are intentionally unaffected.
+ */
+static void EnforceEuropaMainnetMiningSafety(
+    const CChainParams& chainparams,
+    const CBlockIndex* pindexPrev)
+{
+    if (chainparams.NetworkIDString() != "main") {
+        return;
+    }
+
+    static const int ERA_MINING_ANCHOR_HEIGHT = 12000;
+    static const uint256 ERA_MINING_ANCHOR_HASH =
+        uint256S("0xdd212cbd9315c45328e903bfa89e014878b09b2f6f16cff2cb3e9a24612715f1");
+    static const arith_uint256 ERA_MINIMUM_MINING_WORK =
+        UintToArith256(uint256S("0x000000000000000000000000000000000000000000000000000046e276e046d1"));
+
+    if (pindexPrev == nullptr ||
+        pindexPrev->nHeight < ERA_MINING_ANCHOR_HEIGHT) {
+        throw std::runtime_error(
+            "ERA MINING SAFETY: recognised chain anchor height 12000 "
+            "has not been reached; mining refused");
+    }
+
+    const CBlockIndex* pindexAnchor =
+        chainActive[ERA_MINING_ANCHOR_HEIGHT];
+
+    if (pindexAnchor == nullptr ||
+        pindexAnchor->GetBlockHash() != ERA_MINING_ANCHOR_HASH) {
+        throw std::runtime_error(
+            "ERA MINING SAFETY: recognised chain anchor mismatch; "
+            "mining refused");
+    }
+
+    if (pindexPrev->nChainWork < ERA_MINIMUM_MINING_WORK) {
+        throw std::runtime_error(
+            "ERA MINING SAFETY: chainwork below recognised minimum; "
+            "mining refused");
+    }
+
+    if (IsInitialBlockDownload()) {
+        throw std::runtime_error(
+            "ERA MINING SAFETY: node is still synchronising; "
+            "mining refused");
+    }
+
+    if (!g_connman ||
+        g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0) {
+        throw std::runtime_error(
+            "ERA MINING SAFETY: no peer connections; mining refused");
+    }
+}
+
 void BlockAssembler::resetBlock()
 {
     inBlock.clear();
@@ -110,6 +175,9 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     LOCK2(cs_main, mempool.cs);
     CBlockIndex* pindexPrev = chainActive.Tip();
     assert(pindexPrev != nullptr);
+
+    EnforceEuropaMainnetMiningSafety(chainparams, pindexPrev);
+
     nHeight = pindexPrev->nHeight + 1;
 
     pblock->nVersion = ComputeBlockVersion(pindexPrev, chainparams.GetConsensus());
