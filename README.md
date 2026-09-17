@@ -6,6 +6,18 @@ This repository contains the maintained Europa Core source code and is intended
 to preserve the existing Europa network and blockchain while keeping the
 software usable on modern systems.
 
+## Official project locations
+
+The canonical maintained source repository for Europa is:
+
+- https://github.com/Xnuva-Blockchain-Project/Europa
+
+Project information, downloads and wider Europa/Zeus material are published at:
+
+- https://europazeus.org/
+
+Older Europa repositories or pages should be treated as legacy references only.
+
 ## Maintenance policy
 
 Europa is maintained under a preservation-first policy.
