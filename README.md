@@ -18,6 +18,28 @@ Project information, downloads and wider Europa/Zeus material are published at:
 
 Older Europa repositories or pages should be treated as legacy references only.
 
+## ⚠️ Important Scam Warning
+
+As interest in cryptocurrency projects grows, unofficial websites, social-media accounts, marketplaces or individuals may sometimes claim to sell, distribute or represent Europa (ERA).
+
+**Please exercise appropriate caution and always verify information through official project channels.**
+
+The preferred way to obtain ERA is to **mine it directly through the Europa blockchain network**, rather than purchasing coins from unknown individuals or unofficial third-party sellers. Mining allows coins to be obtained through the network's own consensus process without relying on an unknown intermediary.
+
+In particular:
+
+- Be cautious of unsolicited offers to buy or sell ERA directly.
+- Do not assume that a website, exchange, seller or individual is affiliated with the project simply because they use the Europa name, logo or branding.
+- Never send cryptocurrency or money based solely on a private message, social-media post or unofficial website.
+- Never disclose your wallet seed phrase, private keys or passwords to anyone.
+- Download wallet and mining software only from this official GitHub repository or other download locations specifically identified by the project.
+- Verify announcements, releases and important information against the official project repository and website.
+- The project team will never ask for your wallet seed phrase or private keys.
+
+Cryptocurrency transactions are generally irreversible, so taking a few moments to independently verify an offer or communication can provide important protection.
+
+**If you are uncertain whether something is genuine, verify it through the project's official channels before sending funds or providing sensitive information.**
+
 ## Maintenance policy
 
 Europa is maintained under a preservation-first policy.
