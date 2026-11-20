@@ -68,6 +68,16 @@ Project contribution information is available in:
 
 - [CONTRIBUTING.md](CONTRIBUTING.md)
 
+## ERA desktop miner repair (testing)
+
+The corrected Linux ERA mining launcher and the 20 November 2026 repair notes are maintained on a dedicated testing branch, **not yet merged into the main release**:
+
+- [Corrected ERA miner script (`miner.sh`)](https://github.com/Xnuva-Blockchain-Project/Europa/blob/fix/era-miner-rpc-json-20261119/contrib/era-mining/miner.sh)
+- [Mining setup and engineering notes](https://github.com/Xnuva-Blockchain-Project/Europa/blob/fix/era-miner-rpc-json-20261119/contrib/era-mining/README.md)
+- [20 November 2026 miner repair notes and qualification limits](https://github.com/Xnuva-Blockchain-Project/Europa/blob/fix/era-miner-rpc-json-20261119/contrib/era-mining/RELEASE-NOTES-2026-11-20.md)
+
+The fix prevents false reports of successful mining when `generatetoaddress` returns an empty JSON array. Local block acceptance and immature wallet credit were observed during testing, but independent network acceptance, reward maturity, restart recovery, sustained operation, and treasury integration remain outstanding. **This is not a production-qualified Europa wallet/miner release.**
+
 ## Building and running
 
 Build, setup, and runtime documentation is maintained separately from this
