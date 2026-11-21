@@ -21,6 +21,16 @@ During each coin's independent modernisation, investigate transitioning **future
 
 Inventory authoritative live chain, existing Proof-of-Work variants and node/miner behaviour before proposing any activation parameters. Verify historic block/reward validity and reconcile known miner and treasury observations independently.
 
+## Shared RandomX foundation (RX-001 — source prepared)
+
+The common hashing module is being developed independently on XNUVA branch `feature/shared-randomx-engine-20261121`:
+
+- [Shared RandomX engine source](https://github.com/Xnuva-Blockchain-Project/Xnuva/tree/feature/shared-randomx-engine-20261121/shared-randomx-engine)
+- [Per-coin adapter contract and hybrid PoS precautions](https://github.com/Xnuva-Blockchain-Project/Xnuva/blob/feature/shared-randomx-engine-20261121/shared-randomx-engine/docs/COIN-INTEGRATION.md)
+- Foundation is pinned to XNUVA's existing RandomX V2 source at `853a3171ece198f60b5125a16dca83d68a8f53c3`, with standalone CMake, an explicit 80-byte-header interface, light-cache reuse and reference-vector tests.
+- **Current evidence:** GitHub source commit verified; actual standalone compilation and CTest runs are still pending. The engine is NOT imported, linked or activated by this coin yet.
+- A separately audited **coin adapter** must provide historical consensus compatibility, a deterministic seed schedule, target/difficulty, activation and independent network testing before it is safe to use. Historic PoW and active miner compatibility must remain intact.
+
 ## Required stage gates
 
 - [x] Separate experimental branch created. This is a planning milestone only.
