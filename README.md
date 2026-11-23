@@ -117,3 +117,13 @@ Europa Core is distributed under the MIT licence.
 
 See [COPYING](COPYING) for the full licence text and existing copyright
 notices.
+
+## Engineering Standards and Test Records
+
+This project's preservation, modernisation and release-qualification work is documented in the [Golden Standard Cryptocurrency Modernisation Handbook (GSH)](https://github.com/Xnuva-Blockchain-Project/Golden-Standard-Modernisation). The handbook is an engineering evidence register, **not** a declaration that a build, network or wallet is release-ready.
+
+- [Europa (ERA) — history, checksums and qualification status](https://github.com/Xnuva-Blockchain-Project/Golden-Standard-Modernisation/blob/main/coins/ERA/README.md)
+- [Shared RandomX module standards](https://github.com/Xnuva-Blockchain-Project/Golden-Standard-Modernisation/blob/main/randomx/README.md) and [completed/outstanding test checklist](https://github.com/Xnuva-Blockchain-Project/Golden-Standard-Modernisation/blob/main/randomx/checklist.md)
+
+Tests and results are scoped to their own coin, exact source revision and environment. A PASS for another coin does not establish compatibility here. Follow the GSH's preservation, independent-verification and release-gating rules before any consensus, wallet or network change.
+
