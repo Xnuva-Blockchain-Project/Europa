@@ -12,7 +12,8 @@
   "projectSellsCoins": false,
   "preferredAcquisition": "mining",
   "officialExchangeListingPromoted": false,
-  "genesisHash": null,
-  "genesisVerification": "Not independently verified for this register; consult source and synced node",
-  "updated": "2026-11-24"
+  "genesisHash": "3371d05fac15f3aa5ceb494538e736ea3b9fcb5c78613ef57c0abe3205ac44a3",
+  "genesisVerification": "Matched maintained mainnet source declaration; live-node RPC verification pending",
+  "updated": "2026-11-24",
+  "genesisSource": "https://github.com/Xnuva-Blockchain-Project/Europa/blob/main/src/chainparams.cpp#L117"
 }
