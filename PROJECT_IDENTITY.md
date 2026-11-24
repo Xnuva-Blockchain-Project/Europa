@@ -4,7 +4,7 @@ Europa (ERA) is maintained by the XNUVA Blockchain Project at https://github.com
 
 Current consensus: Proof of Work. Proposed name: EuropaX (ERAX). Proposed upgrades are not active merely because they are documented.
 
-Maintained existing blockchain; preservation of chain history and balances is the objective. Genesis identifier requires source and live-node verification before inclusion here.
+Maintained existing blockchain; preservation of chain history and balances is the objective. 
 
 
 - Official website: https://europazeus.org/
@@ -13,3 +13,9 @@ Maintained existing blockchain; preservation of chain history and balances is th
 - Roadmap: https://europazeus.org/randomx-roadmap.html
 
 See [transparency policy](TRANSPARENCY.md).
+
+Mainnet genesis (source-declared): `3371d05fac15f3aa5ceb494538e736ea3b9fcb5c78613ef57c0abe3205ac44a3`
+
+Source: https://github.com/Xnuva-Blockchain-Project/Europa/blob/main/src/chainparams.cpp#L117
+
+Live-node RPC verification remains pending; this is not a live network health or release qualification claim.
