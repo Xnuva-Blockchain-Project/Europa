@@ -15,3 +15,7 @@ Current consensus: Proof of Work; proposed name: EuropaX (ERAX). Check release q
 
 - Identity: https://github.com/Xnuva-Blockchain-Project/Europa/blob/main/PROJECT_IDENTITY.md
 - Transparency: https://github.com/Xnuva-Blockchain-Project/Europa/blob/main/TRANSPARENCY.md
+
+Mainnet genesis (source-declared): 3371d05fac15f3aa5ceb494538e736ea3b9fcb5c78613ef57c0abe3205ac44a3
+Source: https://github.com/Xnuva-Blockchain-Project/Europa/blob/main/src/chainparams.cpp#L117
+Live-node verification pending.
