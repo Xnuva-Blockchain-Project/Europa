@@ -5,7 +5,7 @@
   "repository": "https://github.com/Xnuva-Blockchain-Project/Europa",
   "maintainedBranch": "main",
   "consensus": "Proof of Work",
-  "proposedName": "EuropaX (ERAX)",
+  "proposedName": "Aurzola (AUZV)",
   "website": "https://europazeus.org/",
   "identityRegister": "https://europazeus.org/project-identity.html",
   "explorer": "https://ezhscan.com/",
@@ -14,6 +14,10 @@
   "officialExchangeListingPromoted": false,
   "genesisHash": "3371d05fac15f3aa5ceb494538e736ea3b9fcb5c78613ef57c0abe3205ac44a3",
   "genesisVerification": "Matched maintained mainnet source declaration; live-node RPC verification pending",
-  "updated": "2026-11-24",
-  "genesisSource": "https://github.com/Xnuva-Blockchain-Project/Europa/blob/main/src/chainparams.cpp#L117"
+  "updated": "2026-11-25",
+  "genesisSource": "https://github.com/Xnuva-Blockchain-Project/Europa/blob/main/src/chainparams.cpp#L117",
+  "previousBrandingProposal": "EuropaX (ERAX)",
+  "proposedTicker": "AUZV",
+  "romanHeritage": "Aureus",
+  "brandingStatus": "Selected future public identity; not activated; formal clearance pending"
 }
